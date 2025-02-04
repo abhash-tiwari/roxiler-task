@@ -106,7 +106,7 @@ const TransactionDashboard = () => {
                 <td>{transaction.id}</td>
                 <td>{transaction.title}</td>
                 <td>{transaction.description}</td>
-                <td>${transaction.price}</td>
+                <td>₹{transaction.price}</td>
                 <td>{transaction.category}</td>
                 <td>{transaction.sold ? 'Yes' : 'No'}</td>
                 <td>
