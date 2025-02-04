@@ -4,7 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { PieChart, Pie, Cell } from 'recharts';
 import styles from './TransactionDashboard.module.css';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://roxiler-backend-kteg.onrender.com/api';
 
 const TransactionDashboard = () => {
   const [transactions, setTransactions] = useState([]);
@@ -32,7 +32,7 @@ const TransactionDashboard = () => {
       });
 
       const transactionsRes = await axios.get(`${API_BASE_URL}/transactions`, {
-        params: { month: selectedMonth, search, page, perPage: 10 }
+        params: { month: selectedMonth, search, page, perPage: 5 }
       });
 
       setTransactions(transactionsRes.data.transactions);
