@@ -1,7 +1,7 @@
 const Transaction = require('../models/Transaction');
 const axios = require('axios');
 
-// Helper function to get month's data
+
 const getMonthTransactions = async (month) => {
   return await Transaction.find({
     $expr: {
@@ -21,42 +21,47 @@ exports.initializeDatabase = async (req, res) => {
   }
 };
 
-exports.getTransactions = async (req, res) => {
-  try {
-    const { month, search = '', page = 1, perPage = 10 } = req.query;
-    const monthNumber = new Date(`${month} 1`).getMonth() + 1;
-
-    let query = {
-      $expr: {
-        $eq: [{ $month: '$dateOfSale' }, monthNumber]
+exports.getTransactions = async (req, res, next) => {
+    try {
+      const { search = '', page = 1, perPage = 10 } = req.query;
+      const monthNumber = req.monthNumber;
+  
+      let query = {
+        $expr: {
+          $eq: [{ $month: '$dateOfSale' }, monthNumber]
+        }
+      };
+  
+      if (search) {
+        query.$or = [
+          { title: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } },
+          { price: isNaN(search) ? undefined : Number(search) }
+        ].filter(Boolean);
       }
-    };
-
-    if (search) {
-      query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-        { price: isNaN(search) ? undefined : Number(search) }
-      ].filter(Boolean);
+  
+      // Validate pagination parameters
+      const validatedPage = Math.max(1, parseInt(page));
+      const validatedPerPage = Math.max(1, Math.min(100, parseInt(perPage)));
+      const skip = (validatedPage - 1) * validatedPerPage;
+  
+      const transactions = await Transaction.find(query)
+        .skip(skip)
+        .limit(validatedPerPage);
+  
+      const total = await Transaction.countDocuments(query);
+  
+      res.json({
+        transactions,
+        total,
+        page: validatedPage,
+        perPage: validatedPerPage,
+        totalPages: Math.ceil(total / validatedPerPage)
+      });
+    } catch (error) {
+      next(error);
     }
-
-    const skip = (page - 1) * perPage;
-    const transactions = await Transaction.find(query)
-      .skip(skip)
-      .limit(Number(perPage));
-
-    const total = await Transaction.countDocuments(query);
-
-    res.json({
-      transactions,
-      total,
-      page: Number(page),
-      totalPages: Math.ceil(total / perPage)
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+  };
 
 exports.getStatistics = async (req, res) => {
   try {
