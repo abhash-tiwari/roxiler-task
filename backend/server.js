@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 const connectDB = require('./config/database');
 const transactionRoutes = require('./routes/transactionRoutes');
+const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
@@ -12,6 +13,7 @@ connectDB();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(errorHandler);
 
 // Routes
 app.use('/api', transactionRoutes);
