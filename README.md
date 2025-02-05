@@ -1,70 +1,185 @@
-# Getting Started with Create React App
+# Roxiler Task
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a full-stack MERN application that fetches transaction data from a third-party API, initializes a database with seed data, and provides multiple APIs for transactions listing, statistics, and visual representations using charts. The frontend consumes these APIs to display a table, statistics, and graphical representations.
 
-## Available Scripts
 
-In the project directory, you can run:
+## Backend
 
-### `npm start`
+### Data Source
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Third-Party API URL: https://s3.amazonaws.com/roxiler.com/product_transaction.json
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Request Method: `GET`
 
-### `npm test`
+Response Format: `JSON`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## API Endpoints
 
-### `npm run build`
+#### Initialize Database
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```http
+  GET /api/initialize
+```
+##### Fetches the JSON data from the third-party API and populates the database.
+##### Creates an efficient collection structure for storing transactions.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### Get Transactions List
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```http
+  GET /api/transactions
+```
 
-### `npm run eject`
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `month`      | `string` | **Required** Month filter (January - December) |
+| `search`      | `string` | **Optional** Search by title, description, or price |
+| `page`      | `number` | **Optional** Pagination page number |
+| `perpage`      | `number` | **Optional** Items per page |
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+##### Returns a paginated list of transactions based on the selected month.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+##### Supports search functionality across title, description, and price.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### Get Transactions Statistics
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```http
+  GET /api/statistics
+```
 
-## Learn More
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `month`      | `string` | **Required** Month filter (January - December) |
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### Returns:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Total sale amount for the selected month.
 
-### Code Splitting
+Total number of sold items.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Total number of not sold items.
 
-### Analyzing the Bundle Size
+#### Get Transactions Bar Chart Data
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```http
+  GET /api/bar-chart
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `month`      | `string` | **Required** Month filter (January - December) |
 
-### Making a Progressive Web App
+#### Returns a count of items in the following price ranges:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+0 - 100
 
-### Advanced Configuration
+101 - 200
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+201 - 300
 
-### Deployment
+301 - 400
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+401 - 500
 
-### `npm run build` fails to minify
+501 - 600
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+601 - 700
+
+701 - 800
+
+801 - 900
+
+901+
+
+#### Get Transactions Pie Chart Data
+
+```http
+  GET /api/pie-chart
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `month`      | `string` | **Required** Month filter (January - December) |
+
+#### Returns unique categories and the number of items in each category.
+
+#### Get Combined Data
+
+```http
+  GET /api/pie-chart
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `month`      | `string` | **Required** Month filter (January - December) |
+
+#### Fetches data from the statistics, bar-chart, and pie-chart APIs and returns a combined JSON response.
+
+
+## Frontend
+
+### Transaction Table
+
+Uses /api/transactions to display transactions.
+
+Includes a dropdown with months (Jan - Dec), defaulting to March.
+
+Supports searching transactions by title, description, or price.
+
+Supports pagination with Next and Previous buttons.
+
+### Transaction Statistics
+
+Uses /api/statistics to fetch and display total sales, sold items, and unsold items for the selected month.
+
+### Transaction Bar Chart
+
+Uses /api/bar-chart to display the distribution of items across price ranges.
+
+### Transaction Pie Chart
+
+Uses /api/pie-chart to show the number of items in each category.
+## Tech Stack
+
+**Frontend:** React.js, Axios, React Charts
+
+**Backend:** Node.js, Express.js, MongoDB
+
+**Database:** MongoDB (with Mongoose ODM)
+
+## Setup Instructions
+
+### Prerequisites
+
+Node.js installed
+
+MongoDB installed and running
+
+### Backend Setup
+```bash
+  cd backend
+  npm install
+  npm start
+```
+    
+### Frontend Setup
+```bash
+  cd frontend
+  npm install
+  npm start
+```
+    
+## API Testing
+
+Use Postman or any API client to test the endpoints.
+
+
+## Future Enhancements
+
+Implement authentication and role-based access.
+
+Improve UI with additional filters and sorting.
+
+Optimize database queries for better performance.
+
+
+## Conclusion
+
+This project provides a comprehensive full-stack solution to manage and visualize transaction data. It ensures efficient data retrieval, filtering, and visualization for an enhanced user experience.
+
