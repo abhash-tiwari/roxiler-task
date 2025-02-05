@@ -1,10 +1,13 @@
-import React from 'react';
-import TransactionDashboard from './components/TransactionDashboard';
+import React, { Suspense, lazy } from 'react';
+
+const TransactionDashboard = lazy(() => import('./components/TransactionDashboard'));
 
 function App() {
   return (
     <div className="App">
-      <TransactionDashboard />
+      <Suspense fallback={<div>Loading...</div>}>
+        <TransactionDashboard />
+      </Suspense>
     </div>
   );
 }

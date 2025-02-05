@@ -86,8 +86,13 @@ const TransactionDashboard = () => {
           ))}
         </select>
       </div>
-
-      <div className={styles.tableContainer}>
+   {loading ? (
+    <div className={styles.loadingContainer}>
+    <p>Loading data...</p>
+  </div>
+   ) : (
+    <>
+    <div className={styles.tableContainer}>
         <table className={styles.table}>
           <thead>
             <tr>
@@ -170,6 +175,8 @@ const TransactionDashboard = () => {
           </PieChart>
         </div>
       </div>
+    </>
+   )}
     </div>
   );
 };
