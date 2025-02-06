@@ -117,6 +117,25 @@
     min-width: 250px;
   }
 
+  .monthSelect {
+    width: 100%;
+    max-width: 250px; /* Adjust as needed */
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #ffcc00;
+    color: black;
+    appearance: none; /* Removes default styling */
+  }
+  
+  .selectContainer {
+    display: flex;
+    justify-content: center;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+
   @media (max-width: 768px) {
    .dashboard{
     min-height: 100vh;

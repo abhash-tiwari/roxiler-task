@@ -80,8 +80,8 @@ const TransactionDashboard = () => {
           className={styles.monthSelect}
         >
           {months.map(month => (
-            <option key={month} value={month}>
-              {month.charAt(0).toUpperCase() + month.slice(1)}
+            <option key={month} value={month} >
+              {month.charAt(0).toUpperCase() + month.slice(1)} 
             </option>
           ))}
         </select>
